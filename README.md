@@ -1,2 +1,2 @@
 # Web
-Web dashboard for Polimatk. [The Discord bot](/Polimatk/Discord) integrates with the dashoard.
+Web dashboard for Polimatk, a [Discord, Twitch *and* YouTube bot](/Polimatk/Bot) which integrates with this dashoard.
