@@ -14,6 +14,7 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout to staging server
+      uses: actions/checkout@v2
     - name: Run tests
-    - run: yarn test
+      run: yarn test
