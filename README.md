@@ -1,2 +1,2 @@
 # Web
-Local politics, for the 21st century.
+Web dashboard for Polimatk. [The Discord bot](/Polimatk/Discord) integrates with the dashoard.

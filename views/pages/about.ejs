@@ -1,0 +1,63 @@
+<%- include('../components/header'); %>
+<h4 class="display-4">About</h4>
+<hr>
+<ul class="nav nav-tabs bg-light shadow-lg">
+    <li class="nav-item"><a class="nav-link<%= !section ? ' active' : '' %>" href="/about">Overview</a></li>
+    <li class="nav-item"><a class="nav-link<%= section == 'commands' ? ' active' : '' %>" href="/about/commands">Commands</a></li>
+</ul>
+<div class="card shadow-lg">
+    <div class="card-body">
+        <% if(!section) { %>
+            <h5>What is Polimatk?</h5>
+            <p>
+                While it started as a manager for debates over Discord, Polimatk quickly became a
+                one-size-fits-all bot. With unparalleled customization and an elegant design,
+                it has become one of the most inuitive and feature-rich streaming tools. We hope
+                to continue to innovate in this area for all kinds of communities.
+            </p>
+            <hr>
+            <h5>Get started</h5>
+            <p>
+                Get started by clicking
+                <a class="btn btn-primary btn-sm">Sign in with Discord</a> and choose
+                <a class="btn btn-primary btn-sm">Add to my server</a> so it will join.
+                Then, set up your profile and you're good to go!
+            </p>
+        <% } %>
+
+        <% if(section == 'commands') { %>
+            <h5>Prefixes</h5>
+            <p>
+                Commands support any or no prefix &mdash; when creating a command, it will default
+                to <code>!</code>, which can be changed or removed entirely. Add or modify a
+                command by clicking its name, then click outside of the text box to save it.
+                Confirm your choice if no prefix was provided.
+            </p>
+            <hr>
+            <h5>Variables</h5>
+            <p>
+                Commands support variables, and we're always looking to add more. Currently
+                supported variables:
+                <h6 class="mt-4"><code>{user id}</code></h6>
+                The sender's Discord ID. Example: <strong>45428968096324</strong>
+                <h6 class="mt-4"><code>{user name}</code></h6>
+                The sender's Discord name. Example: <strong>Polimatk</strong>
+                <h6 class="mt-4"><code>{user fullname}</code></h6>
+                The sender's Discord name and identifier. Example: <strong>Polimatk#1337</strong>
+            </p>
+            <hr>
+            <h5>Custom APIs</h5>
+            <p>
+                Want to extend the features of this bot? Commands also support custom APIs. To
+                make a request, add the following where you'd like the response to go:
+                <h6 class="mt-4"><code>{api https://api.polima.tk/autoupdate.txt}</code></h6>
+                Use for plain-text responses, e.g. you want a command that updates automatically.
+                <h6 class="mt-4"><code>{api https://api.polima.tk/v1/weather?q={args} weather.description}</code></h6>
+                For JSON responses, provide the path to the text you want. For multiple texts,
+                include the entire {api } block again &mdash; the response will be cached
+                so your API key will not be used twice.
+            </p>
+        <% } %>
+    </div>
+</div>
+<%- include('../components/footer'); %>

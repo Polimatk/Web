@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Polimatk</title>
+        <link rel="stylesheet" href="https://mdbootstrap.github.io/bootstrap-material-design/dist/css/bootstrap-material-design.min.css">
+        <link rel="stylesheet" href="/dashboard.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300,400&display=swap" rel="stylesheet"> 
+        <style>* { font-family: 'Ubuntu', sans-serif; } .sidebar *, .navbar * { font-weight: 400 !important } </style>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+    <body>
+        <nav class="navbar navbar-dark sticky-top p-0">
+            <a class="navbar-brand col-md-3 col-lg-2 m-0 p-0 px-2" href="/"><img height="50" src="/polimatk-logo-rect-white.png"></a>
+            <button class="btn btn-secondary ml-2 d-block d-md-none" id="navbtn"><span data-feather="menu"></span></button>
+            <ul class="navbar-nav px-3 ml-auto">
+                <li class="nav-item text-nowrap">
+                    <% if(req.user) { %>
+                    <a class="nav-link" href="/<%= req.user.slug ? '@' + req.user.slug : 'profile' %>"><img class="rounded-circle" height="32px" src="https://cdn.discordapp.com/avatars/<%= req.user.discordId %>/<%= req.user.discordProfile.avatar %>.<%= (req.user.discordProfile.avatar.substr(0, 2) == 'a_' ? 'gif' : 'png'); %>" alt="Avatar"> <%= req.user.discordProfile.username %></a>
+                    <% } else { %>
+                    <a class="nav-link btn btn-primary" style="background: #7289DA" data-toggle="modal" data-target="#signin">Sign in with Discord</a>
+                    <% } %>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-bg"></div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <nav id="sidebar" class="d-md-block col-5 col-sm-4 col-md-3 col-lg-2 bg-light sidebar">
+                    <div class="sidebar-sticky">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link<%= tab == 'dashboard' ? ' active' : '' %>" href="/">
+                                <span data-feather="home"></span>
+                                Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link<%= tab == 'commands' ? ' active' : '' %>" href="/commands">
+                                <span data-feather="terminal"></span>
+                                Commands
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link<%= tab == 'voting' ? ' active' : '' %>" href="/voting">
+                                <span data-feather="help-circle"></span>
+                                Topic Votes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link<%= tab == 'debate' ? ' active' : '' %>" href="/debate">
+                                <span data-feather="users"></span>
+                                Debates
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link<%= tab == 'about' ? ' active' : '' %>" href="/about">
+                                <span data-feather="info"></span>
+                                About
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <% if(req.user) { %>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>Modifying</span>
+                            <a class="d-flex align-items-center text-muted" href="<%= config.addBot %>" data-toggle="tooltip" title="Add to server">
+                                <span data-feather="plus-circle"></span>
+                            </a>
+                        </h6>
+                        <ul class="nav flex-column mb-2">
+                            <% for(var i = 0; i < req.user.discordProfile.guilds.length; i++) { %>
+                            <% if((req.user.discordProfile.guilds[i].permissions & 0x20) == 0x20) { %>
+                            <li class="nav-item">
+                                <a class="nav-link<%= req.session.guild == req.user.discordProfile.guilds[i].id ? ' active' : '' %>" href="/server/<%= req.user.discordProfile.guilds[i].id %>">
+                                    <img height="24" class="rounded-circle" src="https://cdn.discordapp.com/icons/<%= req.user.discordProfile.guilds[i].id + '/' + req.user.discordProfile.guilds[i].icon + '.' + (req.user.discordProfile.guilds[i].icon.substr(0, 2) == 'a_' ? 'gif' : 'png') %>" alt="Guild icon">
+                                    <%= req.user.discordProfile.guilds[i].name %>
+                                </a>
+                            </li>
+                            <% } %>
+                            <% } %>
+                        </ul>
+                        <% } %>
+                    </div>
+                </nav>
+                <div class="col-md-3 col-lg-2" id="clearfix"></div>
+                <main class="col-md-9 col-lg-10 px-sm-5 py-4">
+                    <% if(typeof(success) !== 'undefined') { %>
+                        <div class="alert alert-info alert-dismissible fade show">
+                            <%- success %>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <% } %>
+                    <% if(typeof(error) !== 'undefined') { %>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <%- error %>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <% } %>

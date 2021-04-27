@@ -1,0 +1,69 @@
+<%- include('../components/header'); %>
+<% if(req.user) { %>
+    <h4 class="display-4">Welcome back, <%= req.user.discordProfile.username %></h4>
+    <p>Server: <strong><%= req.guild ? req.guild.discordProfile.name : 'none' %></strong></p>
+    <hr>
+    <% if(req.user.remainingSteps) { %>
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <canvas id="setup" height="75"></canvas>
+                    </div>
+                    <div class="col-10">
+                        <h5 class="card-title mt-2">Account setup <span class="badge"><%= (setupSteps - req.user.remainingSteps) / setupSteps * 100 %>%</span></h5>
+                        <p class="card-text">Next step: <%- req.user.currentStep == 'set up your community' ? req.user.currentStep : '<a href="/profile">' + req.user.currentStep + '</a>' %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+    <% if(req.guild) { %>
+        <div class="card mt-3 shadow-lg">
+            <div class="card-body">
+                <h5 class="card-title">Community URL (<%= req.guild.discordProfile.name %>)</h5>
+                <p>This is where users will go to interact with your community.</p>
+                <form class="mb-0" action="/" method="post">
+                    <div id="slug" class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">@</span>
+                        </div>
+                        <input class="form-control" name="slug" type="text" placeholder="server-name" value="<%= req.guild.slug %>"<%= req.guild.slug ? ' disabled' : '' %>>
+                    </div>
+                    <% if(req.guild.slug) { %>
+                        <a href="/@<%= req.guild.slug %>" class="btn btn-info btn-outline mt-4 mb-0">View community page</a>
+                    <% } else { %>
+                        <button type="submit" class="btn btn-info btn-outline mt-4 mb-0">Save</button>
+                    <% } %>
+                </form>
+            </div>
+        </div>
+        <div class="card mt-3 shadow-lg">
+            <div class="card-body">
+                <h5 class="card-title">Live streams (<%= req.guild.discordProfile.name %>)</h5>
+                <p>Add the bot to YouTube and Twitch for a truly seamless experience across platforms.</p>
+                <% if(req.guild.twitchProfile) { %>
+                    <a href="/auth/twitch" class="btn btn-info mt-4 mb-0" disabled>Twitch @<%= req.guild.twitchProfile.login %></a>
+                <% } else { %>
+                    <a href="/auth/twitch" class="btn btn-light mt-4 mb-0" style="background-color: #9146ff">Add to Twitch</a>
+                <% } %>
+                <% if(req.guild.youtubeProfile) { %>
+                    <a href="/auth/youtube" class="btn btn-info mt-4 mb-0" disabled>YouTube @<%= req.guild.youtubeProfile.displayName %></a>
+                <% } else { %>
+                    <a href="/auth/youtube" class="btn btn-light mt-4 mb-0" style="background-color: #ff0000">Add to YouTube</a>
+                <% } %>
+            </div>
+        </div>
+    <% } %>
+    </div>
+<% } else { %>
+    <div class="jumbotron shadow-lg">
+        <h1 class="display-4">Polimatk</h1>
+        <p class="lead">Make your stream more interactive, with the first political chat bot.</p>
+        <p class="text-muted">
+            Sign in with Discord to access communities on Polimatk.
+            The bot supports Twitch and YouTube!
+        </p>
+    </div>
+<% } %>
+<%- include('../components/footer'); %>

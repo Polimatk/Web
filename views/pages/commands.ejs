@@ -1,0 +1,28 @@
+<%- include('../components/header'); %>
+<h4 class="display-4">Commands</h4>
+<p>
+    Click any command to edit, then click outside to save.<br>
+    <a href="/about/commands">Learn about prefixes and variables</a>
+</p>
+<hr>
+<div class="card shadow-lg">
+    <div class="card-body">
+        <table class="table table-hover">
+            <button class="btn btn-info btn-outline"><span data-feather="plus"></span> Add</button>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Responds with...</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" class="form-control form-control-sm" value="!ping"></td>
+                    <td><input type="text" class="form-control form-control-sm" value="Pong!"></td>
+                    <td><button type="button" class="btn btn-sm btn-danger"><span data-feather="trash"></span></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<%- include('../components/footer'); %>

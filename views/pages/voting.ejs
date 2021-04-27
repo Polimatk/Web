@@ -1,0 +1,22 @@
+<%- include('../components/header'); %>
+<h4 class="display-4">Topic Votes</h4>
+<p>Field questions for the panel or find out what your community wants to discuss.</p>
+<div class="card shadow-lg">
+    <div class="card-body">
+        <form action="/voting" method="post">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <button class="btn btn-secondary btn-outline" disabled type="submit" name="act" value="disable">Disable</button>
+                    <button class="btn btn-secondary btn-outline" type="submit" name="act" value="enable">Enable</button>
+                </div>
+                <button class="btn btn-danger btn-outline" type="submit" name="act" value="clear">Clear All</button>
+            </div>
+        </form>
+        <% if(req.guild.slug) { %>
+        <p>Voting link: <a href="https://polima.tk/@<%= req.guild.slug %>/vote">https://polima.tk/@<%= req.guild.slug %>/vote</a></p>
+        <% } else { %>
+        <p><a href="/">Choose a URL for your server</a> to use topic voting.</p>
+        <% } %>
+    </div>
+</div>
+<%- include('../components/footer'); %>

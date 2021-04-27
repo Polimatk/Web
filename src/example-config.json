@@ -1,0 +1,43 @@
+{
+    "session": {
+        "secret": "> SECRET_KEY <",
+        "resave": true,
+        "saveUninitialized": false,
+        "cookie": {
+            "domain": "> COOKIE_DOMAIN <",
+            "path": "/",
+            "maxAge": 604800000,
+            "secure": false,
+            "httpOnly": false
+        }
+    },
+    "passport": {
+        "discord": {
+            "clientID": "> CLIENT_ID <",
+            "clientSecret": "> CLIENT_SECRET <",
+            "callbackURL": "https://polima.tk/auth/discord/continue",
+            "scope": ["identify", "guilds"]
+        },
+        "twitch": {
+            "clientID": "> CLIENT_ID <",
+            "clientSecret": "> CLIENT_SECRET <",
+            "callbackURL": "https://polima.tk/auth/twitch/continue",
+            "scope": "clips:edit channel:edit:commercial channel:manage:broadcast channel:manage:redemptions channel:read:redemptions channel_subscriptions channel:read:subscriptions moderation:read user:read:email"
+        },
+        "youtube": {
+            "clientID": "> CLIENT_ID <",
+            "clientSecret": "> CLIENT_SECRET <",
+            "callbackURL": "https://polima.tk/auth/youtube/continue",
+            "scope": ["https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtubepartner"]
+        }
+    },
+    "addBot": "https://discord.com/oauth2/authorize?response_type=code&redirect_uri=https%3A%2F%2Fpolima.tk%2Fauth%2Fdiscord%2Fcontinue&scope=bot%20identify%20guilds&client_id=833094185434218576",
+    "mysql": {
+        "config": {
+            "host": "> DB_HOST <",
+            "user": "> DB_USER <",
+            "password": "> DB_PASS <",
+            "database": "> DB_NAME <"
+        }
+    }
+}
