@@ -33,7 +33,6 @@ class Server extends EventEmitter {
     start() {
         if(this.started) return console.warn('Tried to start server twice!');
         this.started = true;
-        let me = this;
         if(!this.jest) {
             this.passport.use(new Discord(this.config.passport.discord,
                 function(access, refresh, profile, done) {
@@ -80,13 +79,15 @@ class Server extends EventEmitter {
         
         this.app.use(function(req, res, next) {
             res.set('Access-Control-Allow-Origin', '*');
-            switch(req.headers.host) {
-                case 'polima.tk':
-                case 'www.polima.tk':
-                    return me.web(req, res, next);
-                case 'api.polima.tk':
-                    res.set('Content-Type', 'application/json; charset=utf-8');
-                    return me.api(req, res, next);
+            if(global.server) {
+                switch(req.headers.host) {
+                    case 'polima.tk':
+                    case 'www.polima.tk':
+                        return server.web(req, res, next);
+                    case 'api.polima.tk':
+                        res.set('Content-Type', 'application/json; charset=utf-8');
+                        return server.api(req, res, next);
+                }
             }
             res.status(400);
             res.sendFile(path.join(__dirname, '../static/400.html'));
@@ -98,7 +99,7 @@ class Server extends EventEmitter {
             res.status(404);
             res.sendFile(path.join(__dirname, '../static/404.html'));
         });
-        
+        let me = this;
         this.http = this.app.listen(3000, function(error) {
             if(error) return console.log(error);
             console.log('Server started on :3000');
