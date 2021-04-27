@@ -1,5 +1,3 @@
-const [app, config] = require('../server.js');
-
 module.exports = class User {
     static setupSteps = 2;
     constructor(data) {
@@ -28,7 +26,7 @@ module.exports = class User {
             this.remainingSteps--;
             this.currentStep = null;
         }
-        config.mysql.pool.query(
+        server.pool.query(
             'UPDATE users SET slug = ?, discordProfile = ?, setup = ? WHERE discordId = ?',
             [
                 this.slug,
@@ -47,11 +45,11 @@ module.exports = class User {
             id = profileOrId.id;
             profile = Buffer.from(JSON.stringify(profileOrId), 'utf8').toString('base64');
         }
-        config.mysql.pool.query('SELECT * FROM users WHERE discordId = ?', [id], function(error, results, fields) {
+        server.pool.query('SELECT * FROM users WHERE discordId = ?', [id], function(error, results, fields) {
             if(error) throw error;
             if(results.length) return done(null, new User(results[0]));
             if(!profile) throw new Error('Missing Discord profile data. Can\'t create user');
-            config.mysql.pool.query('INSERT INTO users (discordId, discordProfile) VALUES (?, ?)', [id, profile], function(error, results, fields) {
+            server.pool.query('INSERT INTO users (discordId, discordProfile) VALUES (?, ?)', [id, profile], function(error, results, fields) {
                 if(error) throw error;
                 return User.findOrCreate(profileOrId, done);
             });

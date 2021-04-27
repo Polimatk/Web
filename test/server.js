@@ -1,12 +1,13 @@
-const [app, config] = require('../src/server.js');
+const {Server} = require('../src/server.js');
 const axios = require('axios');
+const server = new Server();
 
 test('Start web server', done => {
-    app.on('listening', () => {
+    server.start();
+    server.on('listening', () => {
         test = axios.get('http://localhost:3000').catch(function(error) {
             if(error.response) expect(error.response.status).toBe(400);
-            app._listen.close();
-            config.mysql.pool.end();
+            server.http.close();
             setTimeout(done);
         });
     });

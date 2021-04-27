@@ -96,10 +96,15 @@ body, html {
   }
   
   .sidebar .nav-link.active {
-    color: #007bff;
-    background:rgba(0, 0, 0, .15);
+    color: #fff;
+    background:rgba(50, 100, 255, .5);
   }
   
+  .sidebar .nav-link.active.server {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
   .sidebar .nav-link:hover .feather,
   .sidebar .nav-link.active .feather {
     color: inherit;

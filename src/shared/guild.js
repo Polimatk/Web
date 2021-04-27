@@ -1,5 +1,3 @@
-const [app, config] = require('../server.js');
-
 module.exports = class Guild {
     static setupSteps = 2;
     constructor(data) {
@@ -10,7 +8,7 @@ module.exports = class Guild {
         this.slug = data.slug;
     }
     save(done) {
-        config.mysql.pool.query(
+        server.pool.query(
             'UPDATE guilds SET slug = ?, discordProfile = ?, twitchProfile = ?, youtubeProfile = ? WHERE discordId = ?',
             [
                 this.slug,
@@ -31,11 +29,11 @@ module.exports = class Guild {
             id = profileOrId.id;
             profile = Buffer.from(JSON.stringify(profileOrId), 'utf8').toString('base64');
         }
-        config.mysql.pool.query('SELECT * FROM guilds WHERE discordId = ?', [id], function(error, results, fields) {
+        server.pool.query('SELECT * FROM guilds WHERE discordId = ?', [id], function(error, results, fields) {
             if(error) throw error;
             if(results.length) return done(null, new Guild(results[0]));
             if(!profile) throw new Error('Missing Discord profile data. Can\'t create user');
-            config.mysql.pool.query('INSERT INTO guilds (discordId, discordProfile) VALUES (?, ?)', [id, profile], function(error, results, fields) {
+            server.pool.query('INSERT INTO guilds (discordId, discordProfile) VALUES (?, ?)', [id, profile], function(error, results, fields) {
                 if(error) throw error;
                 return Guild.findOrCreate(profileOrId, done);
             });

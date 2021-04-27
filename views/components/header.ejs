@@ -67,7 +67,7 @@
                         <% if(req.user) { %>
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                             <span>Modifying</span>
-                            <a class="d-flex align-items-center text-muted" href="<%= config.addBot %>" data-toggle="tooltip" title="Add to server">
+                            <a class="d-flex align-items-center text-muted" href="<%= server.config.addBot %>" data-toggle="tooltip" title="Add to server">
                                 <span data-feather="plus-circle"></span>
                             </a>
                         </h6>
@@ -75,7 +75,7 @@
                             <% for(var i = 0; i < req.user.discordProfile.guilds.length; i++) { %>
                             <% if((req.user.discordProfile.guilds[i].permissions & 0x20) == 0x20) { %>
                             <li class="nav-item">
-                                <a class="nav-link<%= req.session.guild == req.user.discordProfile.guilds[i].id ? ' active' : '' %>" href="/server/<%= req.user.discordProfile.guilds[i].id %>">
+                                <a class="nav-link server<%= req.session.guild == req.user.discordProfile.guilds[i].id ? ' active' : '' %>" href="/server/<%= req.user.discordProfile.guilds[i].id %>">
                                     <img height="24" class="rounded-circle" src="https://cdn.discordapp.com/icons/<%= req.user.discordProfile.guilds[i].id + '/' + req.user.discordProfile.guilds[i].icon + '.' + (req.user.discordProfile.guilds[i].icon.substr(0, 2) == 'a_' ? 'gif' : 'png') %>" alt="Guild icon">
                                     <%= req.user.discordProfile.guilds[i].name %>
                                 </a>

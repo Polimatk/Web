@@ -2,10 +2,10 @@
   "name": "@polimatk/web",
   "version": "1.0.0",
   "description": "Polimatk dashboard",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "jest"
   },
   "repository": {
@@ -20,7 +20,6 @@
   "homepage": "https://github.com/Polimatk/Web#readme",
   "dependencies": {
     "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
     "chart.js": "2.6",
     "connect-mysql": "^4.0.0",
     "ejs": "^3.1.6",
