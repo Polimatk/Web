@@ -19,6 +19,7 @@ class Server extends EventEmitter {
         this.jest = jest;
         this.app = express();
         this.passport = passport;
+        this.scopes = {'user.read': 'See your account info'};
         if(this.jest) {
             this.config = require('./example-config.json');
         }
@@ -76,7 +77,7 @@ class Server extends EventEmitter {
             require('./web');
             require('./api');
         }
-        
+
         this.app.use(function(req, res, next) {
             res.set('Access-Control-Allow-Origin', '*');
             if(global.server) {
@@ -85,19 +86,18 @@ class Server extends EventEmitter {
                     case 'www.polima.tk':
                         return server.web(req, res, next);
                     case 'api.polima.tk':
-                        res.set('Content-Type', 'application/json; charset=utf-8');
                         return server.api(req, res, next);
                 }
             }
             res.status(400);
-            res.sendFile(path.join(__dirname, '../static/400.html'));
+            res.sendFile(path.join(__dirname, '../static/bad-request.html'));
         });
         
         this.app.use(express.static('./static'));
         
         this.app.use(function(req, res, next) {
             res.status(404);
-            res.sendFile(path.join(__dirname, '../static/404.html'));
+            res.render('pages/404', {req: req, server: server, tab: null});
         });
         let me = this;
         this.http = this.app.listen(3000, function(error) {

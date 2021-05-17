@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.dark.min.css">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+            body {
+                font-family: 'Montserrat', sans-serif;
+            }
+            h1, h2, h3 {
+                margin: 0;
+            }
+            .progress {
+                margin-top: 35px;
+                height: 50px;
+            }
+            span[data-choice] {
+                cursor: pointer;
+                color: #aaa;
+            }
+            span[data-choice]:hover, span[data-choice][data-voted] {
+                font-weight: 500;
+                color: #eee;
+            }
+            .votes {
+                position: relative;
+                top: 20px;
+                left: -50%;
+                font-size: 0.85rem;
+                color: #ddd;
+            }
+        </style>
+    </head>
+    <body id="body" style="background-color: rgba(0, 0, 0, 0)">
+        <% if(!req.oauth) { %>
+            Overlay URL has expired, please re-add it.
+        <% } else { %>
+            <div id="ama" style="display: none; background-color: #303030" class="p-4">
+                <h3>AMA</h3>
+                <h4 id="ama-title" style="font-weight: 300"></h4>
+                <p>Submit your answer at: <strong>polima.tk/@<span id="ama-slug"></span></strong></p>
+            </div>
+            <div id="poll" style="display: none; background-color: #303030" class="p-4">
+                <h3>Poll</h3>
+                <h4 id="poll-title" style="font-weight: 300"></h4>
+                <div class="d-sm-flex justify-content-between text-muted mt-3" id="choices">
+                    <div id="choice-clone" style="display: none">
+                        <span class="choice"></span>
+                        <span class="votes d-none d-sm-inline"></span>
+                    </div>
+                </div>
+                <div class="progress" id="votes">
+                    <div id="vote-clone" style="display: none" class="progress-bar bg-primary" role="progressbar"></div>
+                </div>
+            </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"></script>
+            <script>
+                <% if(req.oauth.user) { %>
+                $('#choices').on('click', 'div[data-choice]', function(e) {
+                    e.stopImmediatePropagation();
+                    window.top.postMessage({vote: $(this).data('choice')}, '*');
+                });
+                const user = {token: '<%= req.oauth.id %>', id: '<%= req.oauth.user.discordId %>', name: '<%= req.oauth.user.discordProfile.username %>'};
+                <% } else { %>
+                const user = {token: null, id: null, name: 'readonly'};
+                <% } %>
+                const bgs = [
+                    'bg-primary',
+                    'bg-secondary',
+                    'bg-success',
+                    'bg-danger',
+                    'bg-warning'
+                ];
+                window.pollId = null;
+                const reload = function() {
+                    let type = '<%= req.query.type %>';
+                    let init = false;
+                    if(!type.length || type == 'poll') {
+                        $.get('https://api.polima.tk/v1/polls?type=poll&guild=<%= req.query.guild %>').done(function(poll) {
+                            init = true;
+                            pollId = poll.id;
+                            $('#ama').hide();
+                            $('#poll').slideDown();
+                            $('#poll-title').text(poll.title);
+                            $('#choices > div:not(#choice-clone)').remove();
+                            $('#votes > div:not(#vote-clone)').remove();
+                            let votes = 0;
+                            for(choice in poll.choices) votes += poll.choices[choice].votes;
+                            for(let choice = 0; choice < poll.choices.length; choice++) {
+                                let html = $('#choice-clone').clone().removeAttr('id').appendTo('#choices')
+                                    .removeAttr('style').attr('data-choice', choice + 1);
+                                html.find('.choice').html(poll.choices[choice].text + ': <strong class="text-white">' + poll.choices[choice].id + '</strong>');
+                                html.find('.votes').text(poll.choices[choice].votes + ' vote' + (poll.choices[choice].votes == 1 ? '' : 's'));
+                                $('#vote-clone').clone().removeAttr('id').appendTo('#votes')
+                                    .attr('style', 'width: ' + (poll.choices[choice].votes / votes * 100) + '%')
+                                    .text(poll.choices[choice].text).attr('class', 'progress-bar ' + bgs[choice]);
+                            }
+                        }).fail(function() {
+                            init = true;
+                            pollId = null;
+                            $('#poll').slideUp();
+                            $('#choices > div:not(#choice-clone)').remove();
+                            $('#votes > div:not(#vote-clone)').remove();
+                        });
+                    }
+                    else {
+                        $('#poll').slideUp();
+                        $('#choices > div:not(#choice-clone)').remove();
+                        $('#votes > div:not(#vote-clone)').remove();
+                        pollId = null;
+                    }
+                    if((!type.length || type == 'ama') && !pollId && init) {
+                        $.ajax({
+                            url: 'https://api.polima.tk/v1/polls?type=ama&guild=<%= req.query.guild %>',
+                            type: 'GET',
+                            headers: {
+                                Authorization: 'Bearer ' + user.token
+                            }
+                        }).done(function(poll) {
+                            $.ajax({
+                                url: 'https://api.polima.tk/v1/guilds/' + poll.guild,
+                                type: 'GET',
+                                headers: {
+                                    Authorization: 'Bearer ' + user.token
+                                }
+                            }).done(function(guild) {
+                                $('#poll').hide();
+                                $('#ama').slideDown();
+                                $('#ama-title').text(poll.title);
+                                $('#ama-slug').text(guild.slug);
+                                $('#choices > div:not(#choice-clone)').remove();
+                                $('#votes > div:not(#vote-clone)').remove();
+                            });
+                        }).fail(function() {
+                            $('#ama').slideUp();
+                        });
+                    }
+                    else {
+                        $('#ama').slideUp();
+                    }
+                }
+                reload();
+                setInterval(reload, 2500);
+            </script>
+        <% } %>
+    </body>
+</html>

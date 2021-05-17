@@ -2,12 +2,49 @@
 <% if(profile) { %>
     <div class="d-flex justify-content-between">
         <div>
-            <h4 class="display-4">
+            <h5 class="display-5">
                 <img height="48" class="rounded-circle" src="https://cdn.discordapp.com/icons/<%= profile.discordId + '/' + profile.discordProfile.icon + '.' + (profile.discordProfile.icon.substr(0, 2) == 'a_' ? 'gif' : 'png') %>" alt="User avatar">
                 <%= profile.discordProfile.name %>
-            </h4>
-            <p>This community is on Polimatk! Ask questions with fellow Twitch and YouTube viewers.</p>
+            </h5>
+            <p><%- req.params.page == 'ama'
+                ? 'Choose from other responses or add your own! <a href="/@' + req.params.slug + '">Back to events</a>.'
+                : 'This community is on Polimatk! All current events are listed here.' %>
+            </p>
         </div>
     </div>
+<% if(!req.params.page) { %>
+    <div class="card shadow-lg">
+        <div class="card-body" id="ama-container">
+            <div style="display: none" id="ama-clone">
+                <h5 class="card-title">AMA</h5>
+                <h5 style="font-weight: 300" id="ama-title"></h5>
+                <div class="mt-4">
+                    <a href="/@<%= profile.slug %>/ama" class="btn btn-light" id="ama-choices"></a>
+                </div>
+            </div>
+            <div id="ama-load" class="spinner-border m-4"></div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <iframe src="https://api.polima.tk/overlays/poll?access_token=<%= req.user ? req.user.token : 'readonly' %>&guild=<%= profile.discordId %>" style="height: 250px; width: 100%" scrolling="no"></iframe>
+    </div>
+<% } else if(req.params.page == 'ama') { %>
+    <div class="card shadow-lg">
+        <div class="card-body" id="ama-container">
+            <div style="display: none" id="ama-clone">
+                <h5 style="font-weight: 300" id="ama-title"></h5>
+                <input type="text" id="ama-text" class="form-control" placeholder="Your choice">
+                <div class="mt-4">
+                    <button id="ama-respond" class="btn btn-primary">Add choice</button>
+                </div>
+            </div>
+            <div style="display: none" id="ama-none">
+                <h5 style="font-weight: 300">No events right now, check back later!</h5>
+            </div>
+            <div id="ama-load" class="spinner-border"></div>
+        </div>
+    </div>
+    <!-- responses -->
+<% } %>
 <% } %>
 <%- include('../components/footer'); %>

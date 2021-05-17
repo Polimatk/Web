@@ -2,14 +2,25 @@
 <% if(profile) { %>
     <div class="d-flex justify-content-between">
         <div>
-            <h4 class="display-4">
+            <h5 class="display-5">
                 <img height="48" class="rounded-circle" src="https://cdn.discordapp.com/avatars/<%= profile.discordId + '/' + profile.discordProfile.avatar + '.' + (profile.discordProfile.avatar.substr(0, 2) == 'a_' ? 'gif' : 'png') %>" alt="User avatar">
                 <%= profile.discordProfile.username %>
-            </h4>
+            </h5>
             <p>Joined <%- joined %></p>
         </div>
         <div>
             <a class="btn btn-danger btn-outline" href="/signout">Sign out</a>
+        </div>
+    </div>
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h5 class="card-title">Manager of</h5>
+            <% for(let i = 0; i < guilds.length; i++) { %>
+                <a class="server d-block" href="/@<%= guilds[i].slug %>">
+                    <img height="24" class="rounded-circle" src="https://cdn.discordapp.com/icons/<%= guilds[i].discordProfile.id + '/' + guilds[i].discordProfile.icon + '.' + (guilds[i].discordProfile.icon.substr(0, 2) == 'a_' ? 'gif' : 'png') %>" alt="Guild icon">
+                    <%= guilds[i].discordProfile.name %>
+                </a>
+            <% } %>
         </div>
     </div>
 <% } %>

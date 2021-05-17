@@ -1,3 +1,13 @@
+                    <form method="post" action="<%= req.path %>" class="d-flex justify-content-between mt-4">
+                        <p>
+                            &copy; 2021 <a href="/about">Polimatk</a>
+                        </p>
+                        <p class="ml-auto d-sm-none text-muted">
+                            <button type="submit" name="theme" value="auto" class="btn btn-sm btn-link">auto</button> /
+                            <button type="submit" name="theme" value="light" class="btn btn-sm btn-link">light</button> /
+                            <button type="submit" name="theme" value="dark" class="btn btn-sm btn-link">dark</button>
+                        </p>
+                    </form>
                 </main>
             </div>
         </div>
@@ -11,50 +21,72 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>If you're participating in an event, choose "Just sign in" or add the bot to your server.</p>
+                        <p>
+                            If you're participating in an event, choose "just sign in."<br>
+                            You can also add the bot to your server.
+                        </p>
                     </div>
                     <div class="modal-footer">
-                        <a class="btn btn-primary" href="<%= server.config.addBot %>">Add to my server</a>
-                        <a class="btn btn-secondary" href="/auth/discord">Just sign in</a>
+                        <a class="btn btn-primary" href="<%= server.config.addBot %>">Add to server</a>
+                        <a class="btn btn-light" href="/auth/discord">Just sign in</a>
                     </div>
                 </div>
             </div>
         </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://mdbootstrap.github.io/bootstrap-material-design/assets/js/vendor/popper.min.js"></script>
-        <script src="https://mdbootstrap.github.io/bootstrap-material-design/dist/js/bootstrap-material-design.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/snackbarjs/1.1.0/snackbar.min.js"></script>
-        <script src="/dashboard.js"></script>
+        <script src="/js/mdb.min.js"></script>
         <script>
-        <% if(req.user && req.user.remainingSteps) { %>
-        var setup = new Chart($('#setup')[0], {
-            type: 'doughnut',
-            data: {
-                labels: [
-                    ' Completed',
-                    ' Steps left'
-                ],
-                datasets: [{
-                    data: [<%= 2 - req.user.remainingSteps %>, <%= req.user.remainingSteps %>],
-                    backgroundColor: ['#03a9f4', '#cacaca']
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: false,
-                        text: 'Progress'
+            <% if(req.user) { %>
+            window.app = {
+                user: {
+                    id: '<%= req.user.discordId %>',
+                    name: '<%= req.user.discordProfile.username %>'
+                },
+                token: '<%= req.user.token %>',
+                guild: '<%= req.guild ? req.guild.discordId : 'null' %>',
+                theme: '<%= req.session.theme %>',
+            };
+            <% } else { %>
+            window.app = {
+                user: null
+            };
+            <% } %>
+            <% if(typeof profile == 'object' && profile.twitchProfile !== 'undefined') { %>
+            window.app.page = {guild: '<%= profile.discordId %>'};
+            <% } else { %>
+            window.app.page = null;
+            <% } %>
+            <% if(req.user && req.user.remainingSteps) { %>
+            new Chart($('#setup')[0], {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        ' Completed',
+                        ' Steps left'
+                    ],
+                    datasets: [{
+                        data: [<%= 2 - req.user.remainingSteps %>, <%= req.user.remainingSteps %>],
+                        backgroundColor: ['#03a9f4', '#cacaca']
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: false,
+                            text: 'Progress'
+                        }
                     }
                 }
-            }
-        });
-        <% } %>
+            });
+            <% } %>
         </script>
+        <script src="/js/dashboard.js"></script>
     </body>
 </html>

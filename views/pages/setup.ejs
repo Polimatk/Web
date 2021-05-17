@@ -1,18 +1,6 @@
 <%- include('../components/header'); %>
-<h4 class="display-4">Profile</h4>
-<p>
 <% if(req.user.remainingSteps) { %>
-    Just
-    <%= (req.user.remainingSteps == 1 ? 'one more step' :
-        (req.user.remainingSteps == 2 ? 'a couple more steps' : 'a few more steps')) %>
-    and you're ready!
-<% } else { %>
-    Your account is all set up! <%= req.user.remainingSteps %>
-<% } %>
-</p>
-<hr>
-<% if(req.user.remainingSteps) { %>
-<div class="card">
+<div class="card mt-4">
     <div class="card-body">
         <div class="row">
             <div class="col-2">
@@ -20,9 +8,18 @@
             </div>
             <div class="col-10">
                 <h5 class="card-title mt-2">Account setup <span class="badge"><%= (setupSteps - req.user.remainingSteps) / setupSteps * 100 %>%</span></h5>
-                <p class="card-text">Next step: <%= req.user.currentStep %></p>
+                <p>
+                    <% if(req.user.remainingSteps) { %>
+                        Just
+                        <%= (req.user.remainingSteps == 1 ? 'one more step' :
+                            (req.user.remainingSteps == 2 ? 'a couple more steps' : 'a few more steps')) %>
+                        and you're ready!
+                    <% } else { %>
+                        Your account is all set up! <%= req.user.remainingSteps %>
+                    <% } %>
+                    </p>
             </div>
-        </div><hr>
+        </div>
         <form method="post" action="/profile" class="mt-4 mb-0 p-sm-3">
             <% if(req.user.currentStep == 'choose a username') { %>
             <label for="slug">Profile URL</label>
@@ -33,10 +30,7 @@
                 <input class="form-control" name="slug" type="text" placeholder="username">
             </div>
             <% } %>
-            <div class="mt-4 d-flex justify-content-between">
-                <button type="submit" class="btn btn-outline btn-info mb-0">Save</button>
-                <a class="btn btn-f btn-danger mb-0" href="/signout">Sign out</a>
-            </div>
+            <button type="submit" class="btn btn-primary mt-4 mb-0">Save</button>
         </form>
     </div>
 </div>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Authorize | Polimatk</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://polima.tk/css/mdb.min.css">
+        <style>
+            html, body {
+                width: 100%;
+                min-height: 100%;
+                background: #2f3242;
+            }
+            #auth {
+                background: #282B38;
+                border-radius: 1rem;
+                width: 100%;
+                max-width: 450px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            @media(min-width: 768px) {
+                #auth {
+                    margin-top: 2rem;
+                    margin-bottom: 2rem;
+                }
+            }
+            h4 {
+                background: rgba(0, 0, 0, 0.05);
+                border-radius: .5rem;
+                padding: 1rem 1.75rem 1rem .75rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="auth" class="shadow-lg text-center py-5">
+            <h5 class="text-white pt-2 pb-4">Polimatk <span class="text-muted" style="font-weight: 400">wants to connect</span></h5>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span></span>
+                <% if(req.user) { %>
+                <img src="https://cdn.discordapp.com/avatars/<%= req.user.discordId %>/<%= req.user.discordProfile.avatar %>.<%= (req.user.discordProfile.avatar.substr(0, 2) == 'a_' ? 'gif' : 'png'); %>" class="rounded-circle bg-dark" width="64">
+                <% } else { %>
+                <img src="https://polima.tk/images/default-avatar.jpg" class="rounded-circle bg-dark" width="64">
+                <% } %>
+                <span class="text-white" data-feather="more-horizontal"></span>
+                <img src="https://polima.tk/images/polimatk-logo-white.png" class="rounded-circle bg-dark p-2" width="64">
+                <span></span>
+            </div>
+            <% if(req.user) { %>
+                <div class="pb-4"></div>
+                <h4 class="text-light d-flex justify-content-between align-items-center">
+                    <div class="d-flex text-left">
+                        <span class="ml-3">
+                            <small class="d-block text-muted" style="font-weight: 300; font-size: 1rem">Signed in as</small>
+                            <%= req.user.discordProfile.username %>
+                        </span>
+                    </div>
+                    <div class="margin-right: auto">
+                        <a href="https://polima.tk/signout?state=<%= Buffer.from('https://api.polima.tk' + req.path + '?' + new URLSearchParams(req.query), 'utf8').toString('base64') %>" class="btn btn-dark btn-sm">Sign out</a>
+                    </div>
+                </h4>
+                <br class="mb-3">
+                <small>
+                    It will be able to
+                    <ul class="text-light list-unstyled">
+                        <%
+                        let scopes = req.query.scope.split(' ');
+                        for(scope in scopes) {
+                            if(scopes[scope].toLowerCase() in server.scopes) { %>
+                            <li>
+                                <span class="text-muted" data-feather="chevron-right"></span>
+                                <%= server.scopes[scopes[scope]] %>
+                            </li>
+                            <% }
+                        } %>
+                    </ul>
+                </small>
+                <br class="mb-3">
+                <button class="btn btn-primary" id="allow">Allow</button>
+                <a href="<%= req.query.redirect_uri %>" class="btn btn-dark">Cancel</a>
+            <% } else { %>
+                <small class="pb-3 text-light">Sign in with Discord to use Polimatk.<br><a href="https://polima.tk/about">About Polimatk</a></small>
+                <br class="my-3">
+                <a href="https://discord.com/oauth2/authorize?response_type=code&scope=identify%20guilds&client_id=833094185434218576&redirect_uri=https://polima.tk/auth/discord/continue&state=<%= Buffer.from('https://api.polima.tk' + req.path + '?' + new URLSearchParams(req.query), 'utf8').toString('base64') %>" class="btn btn-primary mt-4">Sign in with Discord</a>
+                <a href="<%= req.query.redirect_uri %>" class="btn btn-dark">Cancel</a>
+            <% } %>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js"></script>
+        <script src="https://polima.tk/js/mdb.min.js"></script>
+        <script>
+        $('#allow').click(function() {
+            window.location.href = new URLSearchParams(window.location.search).get('redirect_uri') + '?code&access_token';
+        });
+        feather.replace();
+        </script>
+    </body>
+</html>

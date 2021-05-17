@@ -1,28 +1,77 @@
 <%- include('../components/header'); %>
-<h4 class="display-4">Commands</h4>
+<h5 class="display-5">Commands</h5>
 <p>
     Click any command to edit, then click outside to save.<br>
     <a href="/about/commands">Learn about prefixes and variables</a>
 </p>
-<hr>
-<div class="card shadow-lg">
+<div class="card shadow-lg mt-4">
     <div class="card-body">
-        <table class="table table-hover">
-            <button class="btn btn-info btn-outline"><span data-feather="plus"></span> Add</button>
+        <button class="btn btn-primary" type="button" id="command-add"><span data-feather="plus"></span> Add</button>
+        <table class="table table-hover" id="commands">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Responds with...</th>
+                    <th class="d-none d-sm-table-cell">Allowed for</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><input type="text" class="form-control form-control-sm" value="!ping"></td>
-                    <td><input type="text" class="form-control form-control-sm" value="Pong!"></td>
-                    <td><button type="button" class="btn btn-sm btn-danger"><span data-feather="trash"></span></button></td>
+                <tr class="command" id="command-clone" style="display: none">
+                    <td class="command-name"></td>
+                    <td class="command-response"></td>
+                    <td class="command-permissions d-none d-sm-table-cell"></td>
+                    <td><button type="button" class="btn btn-sm btn-light command-edit"><span data-feather="settings"></span></button></td>
                 </tr>
+                <% for(i in commands) { command = commands[i]; %>
+                <tr class="command" data-command="<%= command.name %>">
+                    <td class="command-name"><%= command.name %></td>
+                    <td class="command-response"><%= command.response %></td>
+                    <td class="command-permissions d-none d-sm-table-cell"><%- command.permissions.substr(0, 1).toUpperCase() + command.permissions.substr(1) %></td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-light command-edit"><span data-feather="settings"></span></button>
+                    </td>
+                </tr>
+                <% } %>
             </tbody>
         </table>
+    </div>
+</div>
+<div id="command-editor" class="modal fade" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="command-title"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="command-name">Command name</label>
+                <input type="text" class="form-control" id="command-name" placeholder="!ping" required>
+                <small class="form-text text-muted">Include a prefix (e.g. <strong>!</strong>) if desired.</small>
+            </div>
+            <div class="form-group mt-4">
+                <label for="command-response">Response</label>
+                <input type="text" class="form-control" id="command-response" placeholder="Pong!" required>
+                <small class="form-text text-muted">Learn about <a href="/about/commands">variables</a>.</small>
+            </div>
+            <div class="form-group mt-4">
+                <label for="command-permissions">Allow for</label>
+                <select class="custom-select" id="command-permissions">
+                    <option value="all" selected>All</option>
+                    <option value="subs">Subscribers</option>
+                    <option value="mods">Moderators</option>
+                    <option value="none">Disabled</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="command-save">Save changes</button>
+            <button type="button" class="btn btn-danger" id="command-delete"><span data-feather="trash"></button>
+        </div>
+        </div>
     </div>
 </div>
 <%- include('../components/footer'); %>

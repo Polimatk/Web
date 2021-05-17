@@ -29,14 +29,27 @@ module.exports = class Guild {
             id = profileOrId.id;
             profile = Buffer.from(JSON.stringify(profileOrId), 'utf8').toString('base64');
         }
-        server.pool.query('SELECT * FROM guilds WHERE discordId = ?', [id], function(error, results, fields) {
+        server.pool.query('SELECT * FROM guilds WHERE discordId = ?', [id], function(error, results) {
             if(error) throw error;
-            if(results.length) return done(null, new Guild(results[0]));
-            if(!profile) throw new Error('Missing Discord profile data. Can\'t create user');
-            server.pool.query('INSERT INTO guilds (discordId, discordProfile) VALUES (?, ?)', [id, profile], function(error, results, fields) {
-                if(error) throw error;
-                return Guild.findOrCreate(profileOrId, done);
-            });
+            if(results.length) {
+                let guild = new Guild(results[0]);
+                if(profile) {
+                    guild.discordProfile = profileOrId;
+                    guild.save(function(errors, results) {
+                        done(null, guild);
+                    });
+                }
+                else {
+                    done(null, guild);
+                }
+            }
+            else {
+                if(!profile) throw new Error('Missing Discord profile data. Can\'t create user');
+                server.pool.query('INSERT INTO guilds (discordId, discordProfile) VALUES (?, ?)', [id, profile], function(error, results) {
+                    if(error) throw error;
+                    return Guild.findOrCreate(profileOrId, done);
+                });
+            }
         });
     }
 }

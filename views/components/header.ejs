@@ -2,26 +2,64 @@
 <html>
     <head>
         <title>Polimatk</title>
-        <link rel="stylesheet" href="https://mdbootstrap.github.io/bootstrap-material-design/dist/css/bootstrap-material-design.min.css">
-        <link rel="stylesheet" href="/dashboard.css">
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300,400&display=swap" rel="stylesheet"> 
-        <style>* { font-family: 'Ubuntu', sans-serif; } .sidebar *, .navbar * { font-weight: 400 !important } </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+        <link rel="stylesheet" href="/css/dashboard.css">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     </head>
     <body>
-        <nav class="navbar navbar-dark sticky-top p-0">
-            <a class="navbar-brand col-md-3 col-lg-2 m-0 p-0 px-2" href="/"><img height="50" src="/polimatk-logo-rect-white.png"></a>
-            <button class="btn btn-secondary ml-2 d-block d-md-none" id="navbtn"><span data-feather="menu"></span></button>
-            <ul class="navbar-nav px-3 ml-auto">
-                <li class="nav-item text-nowrap">
-                    <% if(req.user) { %>
-                    <a class="nav-link" href="/<%= req.user.slug ? '@' + req.user.slug : 'profile' %>"><img class="rounded-circle" height="32px" src="https://cdn.discordapp.com/avatars/<%= req.user.discordId %>/<%= req.user.discordProfile.avatar %>.<%= (req.user.discordProfile.avatar.substr(0, 2) == 'a_' ? 'gif' : 'png'); %>" alt="Avatar"> <%= req.user.discordProfile.username %></a>
-                    <% } else { %>
-                    <a class="nav-link btn btn-primary" style="background: #7289DA" data-toggle="modal" data-target="#signin">Sign in with Discord</a>
-                    <% } %>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <% if(req.session && req.session.theme != 'auto') { %>
+            <script>
+                $('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb<%- req.session.theme == 'dark' ? '.dark' : '' %>.min.css">').prependTo('head');
+                $('body').attr('id', "<%- req.session.theme == 'dark' ? 'dark' : 'light' %>");
+            </script>
+        <% } else { %>
+            <script>
+                if(window.matchMedia('(prefers-color-scheme: dark)')) {
+                    $('body').attr('id', 'dark');
+                    $('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.dark.min.css">').prependTo('head');
+                }
+                else {
+                    $('body').attr('id', 'light');
+                    $('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css">').prependTo('head');
+                }
+            </script>
+        <% } %>
+        <nav class="navbar navbar-expand-sm navbar-dark fixed-top p-0 justify-content-between">
+            <a class="navbar-brand col-md-3 col-lg-2 m-0 p-0 px-2" href="/"><img height="50" src="/images/polimatk-logo-rect-white.png"></a>
+            <button class="btn text-light ml-2 d-md-none" id="navbtn"><span data-feather="menu"></span></button>
+            <ul class="navbar-nav px-3 ml-auto" style="align-items: center;">
+                <form method="post" action="<%= req.path %>">
+                    <li class="nav-item dropdown d-none d-sm-block">
+                    <a class="nav-link dropdown-toggle" href="#" id="theme" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span data-feather="<%- req.session.theme == 'auto' ? 'eye' : (req.session.theme == 'light' ? 'sun' : 'moon') %>"></span>
+                    </a>
+                        <div class="dropdown-menu" aria-labelledby="theme">
+                            <button class="dropdown-item<%- req.session.theme == 'auto' ? ' active' : '' %>" type="submit" name="theme" value="auto">Auto</button>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item<%- req.session.theme == 'light' ? ' active' : '' %>" type="submit" name="theme" value="light"><span data-feather="sun"></span> Light</button>
+                            <button class="dropdown-item<%- req.session.theme == 'dark' ? ' active' : '' %>" type="submit" name="theme" value="dark"><span data-feather="moon"></span> Dark</button>
+                        </div>
+                    </li>
+                </form>
+            <% if(req.user) { %>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="user" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img class="rounded-circle" height="32px" src="https://cdn.discordapp.com/avatars/<%= req.user.discordId %>/<%= req.user.discordProfile.avatar %>.<%= (req.user.discordProfile.avatar.substr(0, 2) == 'a_' ? 'gif' : 'png'); %>" alt="Avatar"> <%= req.user.discordProfile.username %>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="user">
+                        <a class="dropdown-item" href="/<%= req.user.slug ? '@' + req.user.slug : 'profile' %>">Profile</a>
+                        <a class="dropdown-item" href="/settings">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/signout">Sign out</a>
+                    </div>
                 </li>
+                <% } else { %>
+                <li class="nav-item text-nowrap">
+                    <a class="nav-link btn btn-primary btn-lg p-2 px-3" id="discord" style="background: #7289DA">Sign in with Discord</a>
+                </li>
+                <% } %>
             </ul>
         </nav>
         
@@ -46,14 +84,8 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link<%= tab == 'voting' ? ' active' : '' %>" href="/voting">
-                                <span data-feather="help-circle"></span>
-                                Topic Votes
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link<%= tab == 'debate' ? ' active' : '' %>" href="/debate">
-                                <span data-feather="users"></span>
-                                Debates
+                                <span data-feather="credit-card"></span>
+                                Voting
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -67,7 +99,7 @@
                         <% if(req.user) { %>
                         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                             <span>Modifying</span>
-                            <a class="d-flex align-items-center text-muted" href="<%= server.config.addBot %>" data-toggle="tooltip" title="Add to server">
+                            <a class="d-flex align-items-center text-muted" href="<%= server.config.addBot %>" data-mdb-toggle="tooltip" title="Add to server">
                                 <span data-feather="plus-circle"></span>
                             </a>
                         </h6>
@@ -89,18 +121,12 @@
                 <div class="col-md-3 col-lg-2" id="clearfix"></div>
                 <main class="col-md-9 col-lg-10 px-sm-5 py-4">
                     <% if(typeof(success) !== 'undefined') { %>
-                        <div class="alert alert-info alert-dismissible fade show">
+                        <div class="alert alert-info fade show">
                             <%- success %>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
                         </div>
                     <% } %>
                     <% if(typeof(error) !== 'undefined') { %>
-                        <div class="alert alert-danger alert-dismissible fade show">
+                        <div class="alert alert-danger fade show">
                             <%- error %>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
                         </div>
                     <% } %>

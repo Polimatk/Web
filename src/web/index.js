@@ -1,7 +1,15 @@
 const {User, Guild} = require('../shared');
+const fs = require('fs');
 server.web = require('express').Router();
 
 server.web.use(function(req, res, next) {
+    if(req.session) {
+        if(!req.session.theme) req.session.theme = 'auto';
+        if(req.body.theme && ['auto', 'light', 'dark'].includes(req.body.theme)) {
+            req.session.theme = req.body.theme;
+            return res.redirect(req.path);
+        }
+    }
     if(req.user && req.session.guild) {
         for(var i = 0; i < req.user.discordProfile.guilds.length; i++) {
             if(req.user.discordProfile.guilds[i].id == req.session.guild) {
@@ -20,7 +28,7 @@ server.web.use(function(req, res, next) {
 server.web.get('/', function(req, res) {
     return res.render('pages/index', {req: req, server: server, tab: 'dashboard',
         setupSteps: User.setupSteps,
-        success: !req.user || req.guild ? undefined : 'Please select a server to manage in the menu'});
+        success: !req.user || req.guild ? undefined : 'Please select a server to manage in the menu.'});
 });
 server.web.post('/', function(req, res) {
     if(!req.user || !req.guild) return res.redirect('/');
@@ -52,7 +60,7 @@ server.web.post('/', function(req, res) {
         return res.render('pages/index', {req: req, server: server, tab: 'dashboard',
             setupSteps: User.setupSteps,
             success: success,
-            error: 'Custom URL must be 3-32 letters, numbers, underscores, and hyphens only.'
+            error: req.body.slug ? 'Custom URL must be 3-32 letters, numbers, underscores, and hyphens only.' : undefined
         });
     }
 });
@@ -68,10 +76,8 @@ server.web.get('/server/:server', function(req, res) {
     return res.redirect('/auth/fail');
 });
 
-require('./auth.js');
-require('./profile.js');
-require('./community.js');
-require('./commands.js');
-require('./voting.js');
-require('./debate.js');
-require('./about.js');
+
+fs.readdirSync(__dirname).forEach((page) => {
+    if(page == 'index.js') return;
+    require('./' + page);
+});
