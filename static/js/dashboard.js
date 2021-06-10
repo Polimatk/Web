@@ -13,7 +13,6 @@ const fakeOptions = [
     'Dell'
 ];
 const prettyOptions = function() {
-    console.log('Why the fuck does JavaScript suck so god damn much?');
     $('#poll-options').children().each(function() {
         if($(this).css('display') != 'none') {
             $(this).removeAttr('id');
@@ -99,8 +98,14 @@ $(document).ready(function() {
         $('#command-title').text('New command');
         $('#command-editor').modal('show');
     });
+    let noPrefix = false;
     $('#command-save').click(function() {
         if(!$('#command-name').val().length || !$('#command-response').val().length) {
+            return;
+        }
+        if(!noPrefix && !/^[^a-zA-Z0-9].+$/.test($('#command-name').val())) {
+            toastr.info('Click save again to confirm or add a symbol', 'Are you sure you want a prefixless command?');
+            noPrefix = true;
             return;
         }
         $('#command-save').attr('disabled', '');
