@@ -1,8 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
 
-#light body {
+body#light {
     background-color: #fff;
     background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(240, 243, 255) 100%) no-repeat
+}
+
+body#dark {
+    background-color: #333;
+    color: #ccc;
+}
+
+#dark table tr {
+    border-color: #333;
 }
 
 #dark .navbar-brand, #dark #sidebar, #dark .navbar-dark {

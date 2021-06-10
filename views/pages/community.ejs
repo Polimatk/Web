@@ -12,31 +12,40 @@
             </p>
         </div>
     </div>
+    <ul class="nav nav-tabs shadow-lg">
+        <li class="nav-item" id="tab-cmds">
+            <a class="nav-link" href="/@<%= profile.slug %>">Commands</a>
+        </li>
+        <li class="nav-item" id="tab-load">
+            <a class="nav-link disabled">Loading...</a>
+        </li>
+    </ul>
 <% if(!req.params.page) { %>
     <div class="card shadow-lg">
-        <div class="card-body" id="ama-container">
-            <div style="display: none" id="ama-clone">
-                <h5 class="card-title">AMA</h5>
-                <h5 style="font-weight: 300" id="ama-title"></h5>
-                <div class="mt-4">
-                    <a href="/@<%= profile.slug %>/ama" class="btn btn-light" id="ama-choices"></a>
-                </div>
-            </div>
-            <div id="ama-load" class="spinner-border m-4"></div>
-        </div>
+        <table class="table table-striped mb-0">
+            <tbody>
+                <% for(let cmd = 0; cmd < commands.length; cmd++) { %>
+                <tr>
+                    <td><%= commands[cmd].name %></td>
+                    <td><%= commands[cmd].response %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
     </div>
-    <div class="mt-4">
-        <iframe src="https://api.polima.tk/overlays/poll?access_token=<%= req.user ? req.user.token : 'readonly' %>&guild=<%= profile.discordId %>" style="height: 250px; width: 100%" scrolling="no"></iframe>
-    </div>
+<% } else if(req.params.page == 'poll') { %>
+    <iframe src="https://api.polima.tk/overlays/poll?access_token=<%= req.user ? req.user.token : 'readonly' %>&guild=<%= profile.discordId %>" style="height: 250px; width: 100%" scrolling="no"></iframe>
+    <small>Click or type the choice number to vote.</small>
 <% } else if(req.params.page == 'ama') { %>
     <div class="card shadow-lg">
         <div class="card-body" id="ama-container">
+            <h5 style="font-weight: 300" id="ama-title"></h5>
             <div style="display: none" id="ama-clone">
-                <h5 style="font-weight: 300" id="ama-title"></h5>
-                <input type="text" id="ama-text" class="form-control" placeholder="Your choice">
-                <div class="mt-4">
-                    <button id="ama-respond" class="btn btn-primary">Add choice</button>
+                <div class="form-outline">
+                    <input type="text" id="ama-text" class="form-control">
+                    <label for="ama-text" class="form-label">Your choice</label>
                 </div>
+                <button id="ama-respond" class="btn btn-primary mt-2">Add choice</button>
             </div>
             <div style="display: none" id="ama-none">
                 <h5 style="font-weight: 300">No events right now, check back later!</h5>

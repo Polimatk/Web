@@ -2,40 +2,43 @@
 <html>
     <head>
         <title>Polimatk</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" id="stylesheet">
         <link rel="stylesheet" href="/css/dashboard.css">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     </head>
     <body>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <% if(req.session && req.session.theme != 'auto') { %>
-            <script>
-                $('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb<%- req.session.theme == 'dark' ? '.dark' : '' %>.min.css">').prependTo('head');
-                $('body').attr('id', "<%- req.session.theme == 'dark' ? 'dark' : 'light' %>");
-            </script>
-        <% } else { %>
-            <script>
+        <script>
+            <% if(req.session && req.session.theme != 'auto') { %>
+                <% if(req.session.theme == 'dark') { %>
+                    $('body').attr('id', 'dark');
+                    $('#stylesheet').before('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.dark.min.css">');
+                <% } else { %>
+                    $('body').attr('id', 'light');
+                    $('#stylesheet').before('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css">');
+                <% } %>
+            <% } else { %>
                 if(window.matchMedia('(prefers-color-scheme: dark)')) {
                     $('body').attr('id', 'dark');
-                    $('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.dark.min.css">').prependTo('head');
+                    $('#stylesheet').before('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.dark.min.css">');
                 }
                 else {
                     $('body').attr('id', 'light');
-                    $('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css">').prependTo('head');
+                    $('#stylesheet').before('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css">');
                 }
-            </script>
-        <% } %>
+            <% } %>
+        </script>
         <nav class="navbar navbar-expand-sm navbar-dark fixed-top p-0 justify-content-between">
             <a class="navbar-brand col-md-3 col-lg-2 m-0 p-0 px-2" href="/"><img height="50" src="/images/polimatk-logo-rect-white.png"></a>
             <button class="btn text-light ml-2 d-md-none" id="navbtn"><span data-feather="menu"></span></button>
-            <ul class="navbar-nav px-3 ml-auto" style="align-items: center;">
+            <ul class="navbar-nav px-3 ml-auto" style="align-items: center">
                 <form method="post" action="<%= req.path %>">
                     <li class="nav-item dropdown d-none d-sm-block">
                     <a class="nav-link dropdown-toggle" href="#" id="theme" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span data-feather="<%- req.session.theme == 'auto' ? 'eye' : (req.session.theme == 'light' ? 'sun' : 'moon') %>"></span>
                     </a>
-                        <div class="dropdown-menu" aria-labelledby="theme">
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="theme">
                             <button class="dropdown-item<%- req.session.theme == 'auto' ? ' active' : '' %>" type="submit" name="theme" value="auto">Auto</button>
                             <div class="dropdown-divider"></div>
                             <button class="dropdown-item<%- req.session.theme == 'light' ? ' active' : '' %>" type="submit" name="theme" value="light"><span data-feather="sun"></span> Light</button>
@@ -48,7 +51,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="user" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img class="rounded-circle" height="32px" src="https://cdn.discordapp.com/avatars/<%= req.user.discordId %>/<%= req.user.discordProfile.avatar %>.<%= (req.user.discordProfile.avatar.substr(0, 2) == 'a_' ? 'gif' : 'png'); %>" alt="Avatar"> <%= req.user.discordProfile.username %>
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="user">
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user">
                         <a class="dropdown-item" href="/<%= req.user.slug ? '@' + req.user.slug : 'profile' %>">Profile</a>
                         <a class="dropdown-item" href="/settings">Settings</a>
                         <div class="dropdown-divider"></div>
@@ -67,7 +70,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                <nav id="sidebar" class="d-md-block col-5 col-sm-4 col-md-3 col-lg-2 bg-light sidebar">
+                <nav id="sidebar" class="d-md-block col-5 col-sm-4 col-md-3 col-lg-2 sidebar">
                     <div class="sidebar-sticky">
                         <ul class="nav flex-column">
                             <li class="nav-item">

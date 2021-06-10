@@ -29,6 +29,10 @@ const fixPollOptions = function() {
     }
     setTimeout(prettyOptions, 1000);
 }
+
+feather.replace();
+$('[data-mdb-toggle="tooltip"]').tooltip();
+
 $(document).ready(function() {
     if(app.page && app.page.guild) {
         const vote = function(choice) {
@@ -64,11 +68,6 @@ $(document).ready(function() {
             });
         });
     }
-
-
-    feather.replace();
-    $('[data-mdb-toggle="tooltip"]').tooltip();
-    $('[data-mdb-toggle="snackbar"]').toast();
 
     $('#discord').click(function() {
         $('#signin').modal('show');
@@ -166,6 +165,41 @@ $(document).ready(function() {
             $('#commands tbody tr:first').remove();
         }
     });
+    if($('#tab-load').length) {
+        let types = ['poll', 'ama'];
+        let pageType = 
+            window.location.pathname.split('/').length == 3 ? 
+            window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1) :
+            '';
+        for(let i = 0; i < types.length; i++) {
+            $.get({
+                url: 'https://api.polima.tk/v1/polls?type=' + types[i] + '&guild=' + app.guild,
+                headers: {
+                    Authorization: 'Bearer ' + app.token
+                }
+            }).done(function() {
+                $(i > 0 && $('#tab-' + types[i - 1]).length ? '#tab-' + types[i - 1] : '#tab-cmds').after(
+                    '<li class="nav-item" id="tab-' + types[i] + '">' +
+                    '<a class="nav-link' + (pageType == types[i] ? ' active' : '') + '" href="/@' + app.page.slug + '/' + types[i] + '">' +
+                    types[i] +
+                    '</a>' +
+                    '</li>'
+                );
+            }).fail(function() {
+                $(i > 0 && $('#tab-' + types[i - 1]).length ? '#tab-' + types[i - 1] : '#tab-cmds').after(
+                    '<li class="nav-item disabled" id="tab-' + types[i] + '">' +
+                    '<a class="nav-link' + (pageType == types[i] ? ' active' : '') + '">' + types[i] +
+                    '</a>' +
+                    '</li>'
+                );
+            }).always(function() {
+                if(i == types.length - 1) {
+                    $('#tab-load').remove(); 
+                }
+            });
+        }
+        if(pageType == '') $('#tab-cmds .nav-link').addClass('active');
+    }
     $('#poll-add').click(function() {
         let option = $('#poll-clone').clone().appendTo($('#poll-options')).show();
         fixPollOptions();
@@ -176,6 +210,7 @@ $(document).ready(function() {
     });
     $('#poll-start').click(function() {
         $('#poll-start').attr('disabled', '');
+        toastr.error('Polls are not yet implemented.');
         let options = [];
         let optionInputs = $('#poll-options input');
         for(let i = 1; i < optionInputs.length; i++) {
@@ -199,7 +234,7 @@ $(document).ready(function() {
     });
     $('#poll-end').click(function() {
         $('#poll-end').attr('disabled', '');
-
+        toastr.error('Polls are not yet implemented.');
     });
     if($('#poll-load').length) {
         $.get({
@@ -217,21 +252,22 @@ $(document).ready(function() {
         });
     }
     $('body').on('click', '#ama-respond', function() {
+        toastr.error('AMAs are not yet implemented.');
         $(this).attr('disabled', '');
     });
     $('#ama-start').click(function() {
         $('#ama-start').attr('disabled', '');
-
+        toastr.error('AMAs are not yet implemented.');
     });
     $('#ama-end').click(function() {
         $('#ama-end').attr('disabled', '');
-
+        toastr.error('AMAs are not yet implemented.');
     });
     if($('#ama-load').length) {
         $.get({
-            url: 'https://api.polima.tk/v1/polls?access_token=readonly&type=ama&guild=' + app.page.guild,
+            url: 'https://api.polima.tk/v1/polls?type=ama&guild=' + (app.page && app.page.guild ? app.page.guild : app.guild),
             headers: {
-                Authorization: 'Bearer ' + app.token
+                Authorization: 'Bearer ' + (app.token ? app.token : 'readonly')
             }
         }).done(function(poll) {
             $('#ama-load').hide();
@@ -260,4 +296,12 @@ $(document).ready(function() {
             $('#ama-none').slideDown();
         });
     }
+    $('#access-auto').change(function() {
+        $('#access-table').css('opacity', this.checked ? '0.33' : '1').css('pointer-events', this.checked ? 'none' : 'auto');
+    });
+    $('.access-control button').click(function() {
+        let user = $(this).parent().data('user');
+        let choice = $(this).data('choice');
+        toastr.error('Access control has not yet been implemented.');
+    })
 });

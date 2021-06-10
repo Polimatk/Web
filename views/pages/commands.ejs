@@ -47,18 +47,18 @@
             </button>
         </div>
         <div class="modal-body">
-            <div class="form-group">
-                <label for="command-name">Command name</label>
+            <div class="form-outline">
                 <input type="text" class="form-control" id="command-name" placeholder="!ping" required>
-                <small class="form-text text-muted">Include a prefix (e.g. <strong>!</strong>) if desired.</small>
+                <label for="command-name" class="form-label">Command name</label>
             </div>
-            <div class="form-group mt-4">
-                <label for="command-response">Response</label>
+            <small class="form-text text-muted">Include a prefix (e.g. <strong>!</strong>) if desired.</small>
+            <div class="form-outline mt-4">
                 <input type="text" class="form-control" id="command-response" placeholder="Pong!" required>
-                <small class="form-text text-muted">Learn about <a href="/about/commands">variables</a>.</small>
+                <label for="command-response" class="form-label">Response</label>
             </div>
+            <small class="form-text text-muted">Learn about <a href="/about/commands">variables</a>.</small>
             <div class="form-group mt-4">
-                <label for="command-permissions">Allow for</label>
+                <label for="command-permissions" class="form-label">Allow for</label>
                 <select class="custom-select" id="command-permissions">
                     <option value="all" selected>All</option>
                     <option value="subs">Subscribers</option>

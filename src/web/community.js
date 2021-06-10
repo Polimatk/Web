@@ -1,15 +1,21 @@
 const {Guild} = require('../shared');
 
 server.web.get(['/@:slug', '/@:slug/:page'], function(req, res, next) {
-    var error, profile;
+    var error, profile, commands;
     server.pool.query('SELECT * FROM guilds WHERE slug = ?', [req.params.slug], function(errors, results, fields) {
         if(results.length) {
             profile = new Guild(results[0]);
-            return res.render('pages/community', {req: req, server: server, tab: null,
-                profile: profile,
-                error: error
+            server.pool.query('SELECT * FROM commands WHERE guild = ?', [profile.discordId], function(errors, results) {
+                commands = results;
+                return res.render('pages/community', {req: req, server: server, tab: null,
+                    profile: profile,
+                    commands: commands,
+                    error: error
+                });
             });
         }
-        return next();
+        else {
+            return next();
+        }
     });
 });

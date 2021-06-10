@@ -14,11 +14,14 @@
                 margin-top: 35px;
                 height: 50px;
             }
-            span[data-choice] {
+            .progress-empty {
+                background: rgba(0, 0, 0, 0.33);
+            }
+            div[data-choice] {
                 cursor: pointer;
                 color: #aaa;
             }
-            span[data-choice]:hover, span[data-choice][data-voted] {
+            div[data-choice]:hover, div[data-choice][data-voted] {
                 font-weight: 500;
                 color: #eee;
             }
@@ -43,14 +46,18 @@
             <div id="poll" style="display: none; background-color: #303030" class="p-4">
                 <h3>Poll</h3>
                 <h4 id="poll-title" style="font-weight: 300"></h4>
-                <div class="d-sm-flex justify-content-between text-muted mt-3" id="choices">
-                    <div id="choice-clone" style="display: none">
-                        <span class="choice"></span>
-                        <span class="votes d-none d-sm-inline"></span>
+                <div class="text-muted mt-3" id="choices">
+                    <div id="choice-clone" class="row mb-2" style="display: none">
+                        <div class="col-12 col-sm-5 col-md-4">
+                            <span class="choice"></span>
+                        </div>
+                        <div class="col-12 col-sm-7 col-md-8">
+                            <div class="progress d-inline" style="height: 25px">
+                                <div class="progress-bar bg-primary"></div>
+                                <div class="progress-bar progress-empty"></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="progress" id="votes">
-                    <div id="vote-clone" style="display: none" class="progress-bar bg-primary" role="progressbar"></div>
                 </div>
             </div>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -65,13 +72,6 @@
                 <% } else { %>
                 const user = {token: null, id: null, name: 'readonly'};
                 <% } %>
-                const bgs = [
-                    'bg-primary',
-                    'bg-secondary',
-                    'bg-success',
-                    'bg-danger',
-                    'bg-warning'
-                ];
                 window.pollId = null;
                 const reload = function() {
                     let type = '<%= req.query.type %>';
@@ -84,17 +84,18 @@
                             $('#poll').slideDown();
                             $('#poll-title').text(poll.title);
                             $('#choices > div:not(#choice-clone)').remove();
-                            $('#votes > div:not(#vote-clone)').remove();
                             let votes = 0;
                             for(choice in poll.choices) votes += poll.choices[choice].votes;
                             for(let choice = 0; choice < poll.choices.length; choice++) {
                                 let html = $('#choice-clone').clone().removeAttr('id').appendTo('#choices')
                                     .removeAttr('style').attr('data-choice', choice + 1);
                                 html.find('.choice').html(poll.choices[choice].text + ': <strong class="text-white">' + poll.choices[choice].id + '</strong>');
-                                html.find('.votes').text(poll.choices[choice].votes + ' vote' + (poll.choices[choice].votes == 1 ? '' : 's'));
-                                $('#vote-clone').clone().removeAttr('id').appendTo('#votes')
+                                html.find('.bg-primary')
                                     .attr('style', 'width: ' + (poll.choices[choice].votes / votes * 100) + '%')
-                                    .text(poll.choices[choice].text).attr('class', 'progress-bar ' + bgs[choice]);
+                                    .text(poll.choices[choice].votes);
+                                if(poll.choices[choice].votes == votes && votes > 0) html.find('.progress-empty').remove();
+                                html.find('.progress-empty')
+                                    .attr('style', 'height: 25px; width: ' + (100 - (poll.choices[choice].votes / votes * 100)) + '%');
                             }
                         }).fail(function() {
                             init = true;

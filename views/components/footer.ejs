@@ -55,7 +55,7 @@
             };
             <% } %>
             <% if(typeof profile == 'object' && profile.twitchProfile !== 'undefined') { %>
-            window.app.page = {guild: '<%= profile.discordId %>'};
+            window.app.page = {guild: '<%= profile.discordId %>', slug: '<%= profile.slug %>'};
             <% } else { %>
             window.app.page = null;
             <% } %>

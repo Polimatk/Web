@@ -7,17 +7,17 @@
         <div id="poll-load" class="spinner-border"></div>
         <div id="poll-current" style="display: none">
             <h6>Currently running a poll: <span id="poll-title"></span></h6>
-            <a class="btn btn-light mt-4" href="/@<%= req.guild.slug %>">Results</a>
+            <a class="btn btn-light mt-4" href="/@<%= req.guild.slug %>/poll">Results</a>
             <button class="btn btn-danger mt-4" id="poll-end">End poll</button>
         </div>
         <div id="poll-new" style="display: none">
             <div id="poll-last" style="display: none"></div> <!-- TODO results (store last poll ID) -->
-            <div class="form-group">
-                <label for="poll-title">Poll title</label>
+            <div class="form-outline">
                 <input class="form-control" id="poll-title" placeholder="Who makes the best PC?">
+                <label for="poll-title" class="form-label">Title</label>
             </div>
             <div class="form-group mt-4">
-                <label for="poll-length">Poll duration</label><br>
+                <label for="poll-length">Duration</label><br>
                 <select id="poll-length" class="mdb-select md-form">
                     <option value="10">10 seconds</option>
                     <option value="30">30 seconds</option>
@@ -27,10 +27,10 @@
                 </select>
             </div>
             <hr>
-            <div id="poll-options" style="border-left: 3px solid #bbb">
-                <div class="form-group mt-2 poll-option" id="poll-clone" style="display: none">
-                    <label></label>
+            <div id="poll-options" style="border-left: 3px solid #bbb; padding-left: 5px">
+                <div class="mt-2 poll-option form-outline" id="poll-clone" style="display: none">
                     <input class="form-control" placeholder="Apple">
+                    <label class="form-label">Option</label>
                     <button class="btn btn-danger btn-sm mt-1">Remove</button>
                 </div>
             </div>
@@ -51,9 +51,9 @@
         </div>
         <div id="ama-new" style="display: none">
             <h5>AMA</h5>
-            <div class="form-group">
-                <label for="ama-title">AMA title</label>
+            <div class="form-outline">
                 <input class="form-control" id="ama-title" placeholder="What topics should we cover?">
+                <label for="ama-title" class="form-label">Title</label>
             </div>
             <button class="btn btn-primary mt-4" id="ama-start">Start AMA</button>
         </div>

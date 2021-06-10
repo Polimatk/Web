@@ -56,11 +56,26 @@
         <div class="card mt-4 p-sm-2 shadow-lg">
             <div class="card-body">
                 <h5 class="card-title">Access</h5>
-                <p>
-                    By default, Discord users with the 'manage guild' permission or higher can manage the bot.
-                    Add or remove managers manually here.
-                </p>
-                <p><%- JSON.stringify(req.guild.discordProfile); %></p>
+                <div class="form-check">
+                    <form><input id="access-auto" class="form-check-input" type="checkbox" checked></form>
+                    <label for="access-auto" class="form-check-label">
+                        Give all Discord server managers access to the dashboard.
+                    </label>
+                </div>
+                <p></p>
+                <table class="table table-striped" id="access-table" style="opacity: 0.33; pointer-events: none">
+                    <tbody>
+                        <tr class="align-middle text-light">
+                            <th>Ryan<span class="text-muted">#1460</span></th>
+                            <th style="width: 1px; white-space: nowrap">
+                                <div class="btn-group access-control">
+                                    <button class="btn btn-primary btn-sm" data-choice="admin">Admin</button>
+                                    <button class="btn btn-dark btn-sm" data-choice="none">No access</button>
+                                </div>
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     <% } %>
